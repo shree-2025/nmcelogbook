@@ -1,4 +1,4 @@
-# ctronics infotech - Free React Tailwind Admin Dashboard Template
+# ctronics infotech - ElogBook
 
 This project is a comprehensive **Medical E-log Book** designed for medical colleges and hospitals. It provides a data-driven dashboard and administrative panel for managing patients, staff, departments, and medical activities.
 
