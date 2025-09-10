@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, FileText, Megaphone, CheckCircle } from 'lucide-react';
+import { Users, FileText, Megaphone } from 'lucide-react';
 import ActivityChart from '../../components/charts/ActivityChart';
 import StaffDistributionChart from '../../components/charts/StaffDistributionChart';
 import toast from 'react-hot-toast';

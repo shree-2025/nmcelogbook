@@ -58,7 +58,7 @@ const ViewStudentLogs: React.FC = () => {
   const initialDays = search.get('days') ? parseInt(search.get('days') as string, 10) : 0;
   const initialStudentId = search.get('studentId') || '';
   const [days, setDays] = React.useState<number>(Number.isFinite(initialDays) ? initialDays : 0);
-  const [studentId, setStudentId] = React.useState<string>(initialStudentId);
+  const [studentId] = React.useState<string>(initialStudentId);
 
   const load = async () => {
     if (!user) return;

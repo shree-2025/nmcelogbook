@@ -5,7 +5,7 @@ import DepartmentStudentChart from '../../components/charts/DepartmentStudentCha
 import toast from 'react-hot-toast';
 
 const OrganizationAdminDashboard: React.FC = () => {
-  const [loading, setLoading] = React.useState(true);
+  const [, setLoading] = React.useState(true);
   const [stats, setStats] = React.useState<Array<{ title: string; value: string; icon: React.ReactNode }>>([]);
   const [announcements, setAnnouncements] = React.useState<Array<{ id: number; title: string; createdAt: string; role: string }>>([]);
   const [departmentData, setDepartmentData] = React.useState<any[]>([]);
