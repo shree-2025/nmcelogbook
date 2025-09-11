@@ -359,12 +359,24 @@ export default function orgRouter() {
       return res.status(500).json({ error: 'Failed to upload avatar' });
     }
   });
-  // Ensure additional column exists for manager name (HOD)
+  // Ensure additional column exists for manager name (HOD) in a portable way
   (async () => {
     try {
-      await query('ALTER TABLE departments ADD COLUMN IF NOT EXISTS hod_name VARCHAR(255) NULL');
+      const rows = await query(
+        `SELECT 1 FROM information_schema.COLUMNS 
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'departments' AND COLUMN_NAME = 'hod_name' 
+         LIMIT 1`
+      );
+      const exists = Array.isArray(rows) && rows.length > 0;
+      if (!exists) {
+        try {
+          await query(`ALTER TABLE departments ADD COLUMN hod_name VARCHAR(255) NULL`);
+        } catch (err) {
+          // ignore if lacks privilege or already exists due to race condition
+        }
+      }
     } catch (e) {
-      // ignore if lacks privilege or already exists on older MySQL versions
+      // ignore metadata query issues on restricted environments
     }
   })();
 

@@ -17,23 +17,32 @@ getPool();
 
 // Environment variables
 const PORT = process.env.PORT || 4000;
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || '*';
+// Support comma-separated list of allowed origins
+const FRONTEND_ORIGIN = (process.env.FRONTEND_ORIGIN || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 // --- MIDDLEWARE ---
 // CORS setup
-app.use(cors({
+const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (curl, mobile apps) or from frontend
-    if (!origin || origin === FRONTEND_ORIGIN) return callback(null, true);
+    // Allow requests with no origin (curl, mobile apps)
+    if (!origin) return callback(null, true);
+    // If no allowed origins configured, allow all (use with caution)
+    if (FRONTEND_ORIGIN.length === 0) return callback(null, true);
+    // Allow if in the configured list
+    if (FRONTEND_ORIGIN.includes(origin)) return callback(null, true);
     return callback(new Error('CORS not allowed'));
   },
   credentials: true,
   methods: ['GET','HEAD','PUT','PATCH','POST','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization','X-Requested-With'],
-}));
+};
+app.use(cors(corsOptions));
 
 // Handle preflight requests
-app.options('*', cors());
+app.options('*', cors(corsOptions));
 
 // Parse JSON & URL-encoded
 app.use(express.json());
