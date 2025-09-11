@@ -17,25 +17,27 @@ getPool();
 
 // Environment variables
 const PORT = process.env.PORT || 4000;
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || '*';
 
-// CORS: reflect request origin (allows prod + localhost) and support credentials
-const corsOptions = {
+// --- MIDDLEWARE ---
+// CORS setup
+app.use(cors({
   origin: (origin, callback) => {
-    // allow requests with no origin like mobile apps or curl
-    if (!origin) return callback(null, true);
-    return callback(null, true);
+    // Allow requests with no origin (curl, mobile apps) or from frontend
+    if (!origin || origin === FRONTEND_ORIGIN) return callback(null, true);
+    return callback(new Error('CORS not allowed'));
   },
   credentials: true,
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-};
+  methods: ['GET','HEAD','PUT','PATCH','POST','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization','X-Requested-With'],
+}));
 
-app.use(cors(corsOptions));
+// Handle preflight requests
+app.options('*', cors());
+
+// Parse JSON & URL-encoded
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Handle preflight requests for all routes
-app.options('*', cors(corsOptions));
 
 // --- HEALTH CHECK ---
 app.get('/health', (req, res) => {
@@ -53,7 +55,7 @@ app.use('/uploads', uploadsRouter());
 
 // --- ERROR HANDLER ---
 app.use((err, req, res, next) => {
-  console.error(err);
+  console.error(err.stack);
   res.status(err.status || 500).json({ error: err.message || 'Server error' });
 });
 
