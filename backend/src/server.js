@@ -30,12 +30,12 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 };
 
-app.use(cors({ origin: ORIGIN, credentials: true }));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Handle preflight requests for all routes
-app.options('*', cors({ origin: ORIGIN, credentials: true }));
+app.options('*', cors(corsOptions));
 
 // --- HEALTH CHECK ---
 app.get('/health', (req, res) => {
