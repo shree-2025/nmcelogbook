@@ -15,9 +15,23 @@ const app = express();
 getPool();
 
 const PORT = process.env.PORT || 4000;
-const ORIGIN = process.env.FRONTEND_ORIGIN || '*';
 
-app.use(cors({ origin: ORIGIN, credentials: true }));
+// CORS: reflect request origin (allows prod + localhost) and support credentials
+const corsOptions = {
+  origin: (origin, callback) => {
+    // allow requests with no origin like mobile apps or curl
+    if (!origin) return callback(null, true);
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+};
+
+app.use(cors(corsOptions));
+// Explicitly handle preflight for all routes
+app.options('*', cors(corsOptions));
+
 app.use(express.json());
 
 app.get('/health', (req, res) => {
